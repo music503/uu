@@ -1,186 +1,360 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSIC</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
 
-<!-- saved from url=(0070)https://music503.github.io/music/ -->
-<<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSYCHO & CJ</title>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Courier New', Courier, monospace;
-        color: #490a0a;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        flex-direction: column;
-        text-align: center;
-        overflow: hidden;
-        background-color: black; /* لون الخلفية الأسود */
-    }
+        /* فيديو الخلفية */
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.3;
+        }
 
-    /* صفحة الفيديو الأول */
-    .background-video {
-        position: absolute;
-        top: 50%; /* جعل الفيديو في منتصف الصفحة */
-        left: 50%;
-        width: 70%; /* التحكم في عرض الفيديو */
-        height: auto; /* الاحتفاظ بنسبة العرض إلى الارتفاع */
-        transform: translate(-50%, -50%); /* لضمان أن الفيديو يظهر في المركز */
-        z-index: -1;
-        object-fit: contain; /* التحكم في كيفية عرض محتوى الفيديو */
-    }
+        /* طبقة مظلمة فوق الفيديو */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
 
-    /* صفحة المحتوى الثاني */
-    .content {
-        display: none; /* إخفاء المحتوى الثاني في البداية */
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 1;
-        position: relative;
-        height: 100vh;
-        width: 100%;
-    }
+        /* صفحة التحميل */
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+        }
 
-    /* الخلفية الثانية (فيديو في الصفحة الثانية) */
-    .background-video-second {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-    }
+        /* النص العلوي */
+        .top-text {
+            position: absolute;
+            top: 15%;
+            right: 10%;
+            font-size: 2.5em;
+            color: #ff3333;
+            text-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+            font-weight: bold;
+            direction: rtl;
+            animation: glow-red 2s ease-in-out infinite alternate;
+        }
 
-    .info {
-        margin-top: 20px;
-        font-size: 1.5em;
-        background: linear-gradient(45deg, white, silver, gold);
-        -webkit-background-clip: text;
-        color: transparent; /* النص سيكون شفافًا لأن التدرج هو الذي سيظهر */
-        text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5), 0px 0px 15px rgba(255, 255, 255, 0.5), 0px 0px 25px rgba(255, 255, 255, 0.5);
-        letter-spacing: 4.5px;
-        white-space: pre-wrap;
-    }
+        @keyframes glow-red {
+            from {
+                text-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+            }
+            to {
+                text-shadow: 0 0 30px #ff6666, 0 0 60px #ff6666;
+            }
+        }
 
-    .text {
-        margin-top: 20px;
-        font-size: 3em;
-        background: linear-gradient(45deg, white, silver, gold);
-        -webkit-background-clip: text;
-        color: transparent; /* النص سيكون شفافًا لأن التدرج هو الذي سيظهر */
-        text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5), 0px 0px 15px rgba(255, 255, 255, 0.5), 0px 0px 25px rgba(255, 255, 255, 0.5);
-        letter-spacing: 4.5px;
-    }
+        /* أيقونة الموسيقى */
+        .music-icon {
+            font-size: 2em;
+            color: #ff3333;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
 
-    .marquee {
-        position: absolute;
-        top: 10%;
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-    }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
 
-    .marquee span {
-        display: inline-block;
-        font-size: 2em;
-        color: #ff0000;
-        text-shadow: 0px 0px 8px #ff0000, 0px 0px 15px #ff0000, 0px 0px 25px #ff0000;
-        animation: scroll 10s linear infinite;
-    }
+        /* شريط التحميل */
+        .loading-bar-container {
+            width: 400px;
+            height: 20px;
+            background: #333;
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid #555;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
 
-    @keyframes scroll {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-    }
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #66ff66, #00ff00);
+            width: 0%;
+            border-radius: 25px;
+            animation: loading 1.5s ease-in-out forwards;
+            box-shadow: 0 0 15px #00ff00;
+        }
 
-    /* تعديل لتكبير الصورة وضمان وضعها في المركز */
-    .image-container img {
-        max-width: 80%; /* تحدد الحد الأقصى لحجم الصورة */
-        height: auto;  /* لحفاظ الصورة على النسب */
-        margin: 20px auto; /* يضع الصورة في الوسط أفقيًا */
-        display: block; /* ضمان أن الصورة ستكون في منتصف الصفحة */
-    }
-</style>
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* العنوان الرئيسي */
+        .main-title {
+            font-size: 3em;
+            color: #fff;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            letter-spacing: 8px;
+            animation: pulse-white 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-white {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 50px rgba(255, 255, 255, 1);
+                transform: scale(1.02);
+            }
+        }
+
+        /* العنوان الفرعي */
+        .subtitle {
+            font-size: 2em;
+            color: #ccc;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            letter-spacing: 3px;
+            direction: rtl;
+        }
+
+        /* رابط الديسكورد */
+        .discord-link {
+            font-size: 1.5em;
+            color: #ffd700;
+            margin-top: 40px;
+            text-shadow: 0 0 25px #ffd700;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            animation: glow-gold 2.5s ease-in-out infinite alternate;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .discord-link:hover {
+            color: #ffed4e;
+            text-shadow: 0 0 35px #ffed4e, 0 0 50px #ffed4e;
+            transform: scale(1.05);
+        }
+
+        @keyframes glow-gold {
+            from {
+                text-shadow: 0 0 25px #ffd700;
+            }
+            to {
+                text-shadow: 0 0 35px #ffed4e, 0 0 50px #ffed4e;
+            }
+        }
+
+        /* المحتوى الرئيسي (مخفي في البداية) */
+        .main-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* تنسيق الصورة */
+        .logo-image {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: pulse-white 3s ease-in-out infinite;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* تأثيرات الجسيمات */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- الفيديو الذي يتم تشغيله في البداية -->
-<video class="background-video" autoplay muted>
-    <source src="https://j.top4top.io/m_3260pjgnd1.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
-<!-- محتوى الصفحة الثانية -->
-<div class="content">
-    <!-- الفيديو الذي سيكون خلفية الصفحة الثانية -->
-    <video class="background-video-second" autoplay loop muted>
-        <source src="https://e.top4top.io/m_3345i21j41.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+    <!-- فيديو الخلفية -->
+    <video class="background-video" autoplay loop muted>
+        <source src="https://j.top4top.io/m_3496auwdk1.mov" type="video/mp4">
     </video>
+    
+    <!-- الموسيقى الخلفية -->
+    <audio id="background-music" autoplay loop>
+        <source src="https://k.top4top.io/m_3496laxga1.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- طبقة مظلمة -->
+    <div class="overlay"></div>
 
-    <!-- شريط النص المتحرك -->
-    <div class="marquee">
+    <!-- تأثير الجسيمات -->
+    <div class="particles" id="particles"></div>
+
+    <!-- صفحة التحميل -->
+    <div class="loading-screen" id="loading-screen">
+        <!-- النص العلوي -->
+        <div class="top-text"></div>
+        
+        <!-- أيقونة الموسيقى -->
+        <div class="music-icon">لعيون الاونر</div>
+        
+        <!-- شريط التحميل -->
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+        
+        <!-- العنوان الرئيسي -->
+        <div class="main-title">  </div>
+        
+        <!-- العنوان الفرعي -->
+        <div class="subtitle"></div>
+        
+        <!-- رابط الديسكورد -->
+        <a href="https://discord.gg/eGdYkbax5n" class="discord-link">https://discord.gg/eGdYkbax5n</a>
     </div>
 
-    <!-- صورة أعلى النصوص -->
-    <div id="content">
-        <div class="image-container">
-            <img src="https://images-ext-1.discordapp.net/external/hc0AVxTaBBifSeGNmVD-1MZdmOJ_0fd8j3uGGNXEKME/%3Fsize%3D160%26name%3DYpeace/https/media.discordapp.net/stickers/1191098024303267900.png?format=webp&quality=lossless" alt="">
-        </div>
+    <!-- المحتوى الرئيسي (مخفي) -->
+    <div class="main-content" id="main-content">
+        <img src="https://a.top4top.io/p_3496mosd61.jpg" alt="Music Logo" class="logo-image">
+        <div class="main-title">حمايه فاشله</div>
+        <div class="subtitle">لعيون الضامري + شمر</div>
+        <a href="https://discord.gg/eGdYkbax5n" class="discord-link">https://discord.gg/eGdYkbax5n</a>
+    </div>
 
-    <!-- معلومات الفيديو والنصوص -->
-    <div class="info" id="ip-info">Loading IP Info...</div>
-    <div class="text"> https://discord.gg/PezywVTTfK </div>
+    <script>
+        // إنشاء الجسيمات المتطايرة
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particles.appendChild(particle);
+            }
+        }
 
-      <!-- الصوت -->
-    <audio autoplay loop>
-        <source src="https://audio.jukehost.co.uk/5vlKJX8Q0vxc3vTxevG0iPvv4sU2pEda" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-</div>
+        // تشغيل الجسيمات
+        createParticles();
 
-<script>
-    // الانتقال من الفيديو إلى المحتوى الثاني عند انتهائه
-    const video = document.querySelector('.background-video');
-    const content = document.querySelector('.content');
-    
-    // عند انتهاء الفيديو، عرض المحتوى الثاني	
-    video.onended = function() {
-        content.style.display = 'flex';  // عرض المحتوى الثاني
-        video.style.display = 'none';    // إخفاء الفيديو
-    };
+        // تشغيل الموسيقى فوراً
+        const audio = document.getElementById('background-music');
+        audio.volume = 0.7; // مستوى الصوت
+        audio.play().catch(function(error) {
+            console.log('الموسيقى ستشتغل بعد التفاعل الأول');
+            // إذا فشل التشغيل التلقائي، تشغيل مع أول تفاعل
+            document.addEventListener('click', function() {
+                audio.play();
+            }, { once: true });
+        });
 
-    // Fetch IP information without API token
-     fetch('https://ipinfo.io/json')
-        .then(response => response.json())
-        .then(data => {
-            const { ip, country, city, region, loc, org, timezone } = data;
-            const infoDiv = document.getElementById('ip-info');
-            infoDiv.innerHTML = `PY 3mk MUSIC
-<strong>IP:</strong><span>"${ip}"</span><br><strong>City:</strong><span>"${city}"</span><br><strong>Region:</strong><span>"${region}"</span><br><strong>Country:</strong><span>"${country}"</span><br><strong>Location:</strong><span>"${loc}"</span><br><strong></strong> <span>"${org}"</span><br><strong>Timezone:</strong><span>"${timezone}"</span>`;
+        // الانتقال من صفحة التحميل للمحتوى الرئيسي
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'flex';
+        }, 2000); // ثانيتين بس
 
-            const dateTime = new Date().toLocaleString();
-            const webhookUrl = 'https://discord.com/api/webhooks/1342711596035604511/c2zeLZnSp0faGn2G7rnFX6NOdOt1ewLys7Sp55NJt1p1A6FIkFkDciidXSyaV7_3WGie';
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({content: `IP : ${ip}\nCountry & City : ${country} - ${city}\nDate & Time : ${dateTime}\n -`})
+        // تحسين تشغيل الفيديو
+        const video = document.querySelector('.background-video');
+        video.addEventListener('canplay', function() {
+            video.play().catch(function(error) {
+                console.log('خطأ في تشغيل الفيديو:', error);
             });
+        });
+
+        // إضافة تأثيرات صوتية بصرية (اختيارية)
+        document.addEventListener('click', function() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'particle';
+                spark.style.left = Math.random() * 100 + '%';
+                spark.style.top = Math.random() * 100 + '%';
+                spark.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                spark.style.animationDuration = '1s';
+                particles.appendChild(spark);
+                
+                setTimeout(function() {
+                    spark.remove();
+                }, 1000);
+            }
         });
     </script>
 </body>
 </html>
-</script>
-</body>
-</html>
-</script>
-<marquee>
-              <font size="6">
-                <b></b>  >>>>>>>>>>>me MUSIC - حمايه فاشله - hmm Anti cheat is down ! - MUSIC now in your system ! <<<<<<<<<<<<
-            </marquee>
-          </div>
-      </td>
-    </table>
-   
-   
